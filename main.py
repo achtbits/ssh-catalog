@@ -51,7 +51,35 @@ def addhost():
     conn.commit()
     cursor.close()
 
-#Modify host
+def modifyhost():
+    print("Type the ID of a host you want to modify.")
+    modifyid = input ("ID: ")
+    sqlite_search_query = """SELECT * from CONNECTIONS where ID like (?)"""
+    cursor.execute(sqlite_search_query, modifyid)
+    result = cursor.fetchall()
+    for row in result:
+        id = row[0]
+        name = row[1]
+        ip = row[2]
+        port = row[3]
+        username = row[4]
+        password = row[5]
+    print("Old name: " + name)
+    print("Old IP: " + ip)
+    print("Old port: " + port)
+    print("Old username: " + username)
+    print("Old password: " + password)
+    print("\n")
+    modifyname = input ("Name: ")
+    modifyip = input ("IP Address: ")
+    modifyport = input ("Port: ")
+    modifyusername = input ("Username: ")
+    modifypassword = input ("Password: ")
+    cursor.execute("UPDATE CONNECTIONS SET NAME=?, IP=?, PORT=?, USERNAME=?, PASSWORD=? WHERE ID=?", (modifyname, modifyip, modifyport, modifyusername, modifypassword, modifyid))
+    conn.commit()
+    cursor.close()
+
+
 
 def deletehost():
     print("Type the ID of a host you want to remove from the catalog.")
@@ -74,10 +102,10 @@ def main():
     while choice =='0':
         #Main menu.
         print("SSH Catalog - 1.0")
-        print("1. Show connections") # Show hosts in the catalog and connect to selected host.
-        print("2. Add new connection") # Add new host to the catalog.
-        print("3. Modify existing connection") # Modify existing host.
-        print("4. Delete host from catalog") # Delete host from the catalog.
+        print("1. Show connections")
+        print("2. Add new connection")
+        print("3. Modify existing connection")
+        print("4. Delete host from catalog")
 
         choice = input ("Please make a choice: ")
 
@@ -86,7 +114,7 @@ def main():
         elif choice == "2":
             addhost()
         elif choice == "3":
-            print("Test 3------------------")
+            modifyhost()
         elif choice == "4":
             deletehost()
 
