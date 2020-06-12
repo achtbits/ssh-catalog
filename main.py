@@ -6,7 +6,8 @@ import argparse
 
 def connectdb():
     global conn, cursor
-    conn = sqlite3.connect('catalog.db')
+    dirpath = os.path.dirname(os.path.abspath(__file__))
+    conn = sqlite3.connect(dirpath + '/catalog.db')
     cursor = conn.cursor()
 
 def showhosts():
@@ -136,4 +137,5 @@ def main():
             else:
                 print("Choice does not exist. Better luck next time!")
                 cursor.close()
-main()
+if __name__ == '__main__':
+    main()
