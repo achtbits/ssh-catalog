@@ -7,7 +7,7 @@ Download the release, unpack it and then use pip install.
 # usage
 After installation you can use 'sshcat' in the terminal. It will create a menu with options. Very simple.
 Beside a menu, you can use arguments.
--h, --help (You already know this one.)
+-h, --help (You already know this one.) <br>
 -s, --show (this will list entries from the database and ask if you want to connect to any of the SSH hosts.)
 -a, --add (This is where you add new entries to the database.)
 -m, --modify (Modify existing entries in the database.)
