@@ -2,6 +2,7 @@
 
 import sqlite3
 import os
+import argparse
 
 def connectdb():
     global conn, cursor
@@ -97,30 +98,42 @@ def deletehost():
 
 def main():
     connectdb()
+    parser = argparse.ArgumentParser(description='List of argument options', add_help=True)
+    parser.add_argument('-s', '--show', dest='show', action='store_true', help='Show all entries in the catalog and connect.')
+    parser.add_argument('-a', '--add', dest='add', action='store_true', help='Add a new host to the catalog.')
+    parser.add_argument('-m', '--modify', dest='modify', action='store_true', help='Modify an entry in the catalog')
+    parser.add_argument('-d', '--delete', dest='delete', action='store_true', help='Delete an entry in the catalog')
+    args = parser.parse_args()
 
+    if args.show:
+        showhosts()
+    elif args.add:
+        addhost()
+    elif args.modify:
+        modifyhost()
+    elif args.delete:
+        deletehost()
+    else:
+        #main menu
+        choice ='0'
+        while choice =='0':
+            print("SSH Catalog - 1.0")
+            print("1. Show connections")
+            print("2. Add new connection")
+            print("3. Modify existing connection")
+            print("4. Delete host from catalog")
 
-    choice ='0'
-    while choice =='0':
-        #Main menu.
-        print("SSH Catalog - 1.0")
-        print("1. Show connections")
-        print("2. Add new connection")
-        print("3. Modify existing connection")
-        print("4. Delete host from catalog")
+            choice = input ("Please make a choice: ")
 
-        choice = input ("Please make a choice: ")
-
-        if choice == "1":
-            showhosts()
-        elif choice == "2":
-            addhost()
-        elif choice == "3":
-            modifyhost()
-        elif choice == "4":
-            deletehost()
-
-        else:
-            print("Choice does not exist. Better luck next time!")
-
-
+            if choice == "1":
+                showhosts()
+            elif choice == "2":
+                addhost()
+            elif choice == "3":
+                modifyhost()
+            elif choice == "4":
+                deletehost()
+            else:
+                print("Choice does not exist. Better luck next time!")
+                cursor.close()
 main()
