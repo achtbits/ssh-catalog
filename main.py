@@ -2,13 +2,36 @@
 
 import sqlite3
 import os
+from os.path import expanduser
 import argparse
+import shutil
+
+def gatherinfo():
+    global dirpath, dbpath, homepath
+    dirpath = os.path.dirname(os.path.abspath(__file__))
+    dbpath = (dirpath + '/catalog.db')
+    homepath = os.path.expanduser("~")
 
 def connectdb():
     global conn, cursor
-    dirpath = os.path.dirname(os.path.abspath(__file__))
+    #dirpath = os.path.dirname(os.path.abspath(__file__))
     conn = sqlite3.connect(dirpath + '/catalog.db')
     cursor = conn.cursor()
+
+def backupdb(bor):
+    if bor == "backup":
+        shutil.copy(dbpath, homepath)
+        print("database has been backed up to -> " + homepath + "/catalog.db")
+    elif bor == "restore":
+        print("Restoring the database from your homefolder. Make sure it's there and named 'catalog.db'")
+        print("If you are sure, type yes. if not, move it there before continuing.")
+        question = input ("Are you sure?: ")
+        if question == "yes":
+            shutil.copy(homepath + "/catalog.db", dirpath)
+        else:
+            print("Invalid input. Aborting database restore.")
+    else:
+        print("Use either -b, --backup restore|backup")
 
 def showhosts():
     os.system('clear')
@@ -41,6 +64,7 @@ def showhosts():
     cursor.close
     #Connect to SSH host.
     os.system("ssh " + (ip) + " -l " + (username))
+
 
 def addhost():
     print("Add a new SSH connection to the catalog")
@@ -98,12 +122,14 @@ def deletehost():
         cursor.close()
 
 def main():
+    gatherinfo()
     connectdb()
-    parser = argparse.ArgumentParser(description='List of argument options', add_help=True)
+    parser = argparse.ArgumentParser(description='List of argument options', add_help=True, allow_abbrev=False)
     parser.add_argument('-s', '--show', dest='show', action='store_true', help='Show all entries in the catalog and connect.')
     parser.add_argument('-a', '--add', dest='add', action='store_true', help='Add a new host to the catalog.')
     parser.add_argument('-m', '--modify', dest='modify', action='store_true', help='Modify an entry in the catalog')
     parser.add_argument('-d', '--delete', dest='delete', action='store_true', help='Delete an entry in the catalog')
+    parser.add_argument('-b', '--backup', dest='backup', action='store', type=str, help='Create or restore a backup of the current database.')
     args = parser.parse_args()
 
     if args.show:
@@ -114,6 +140,8 @@ def main():
         modifyhost()
     elif args.delete:
         deletehost()
+    elif args.backup:
+        backupdb(bor=args.backup)
     else:
         #main menu
         choice ='0'
