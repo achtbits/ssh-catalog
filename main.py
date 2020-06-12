@@ -24,7 +24,7 @@ def showhosts():
         print("PASSWORD: ", row[5])
         print("\n")
                 
-            #Search for ID and connecto to host    
+    #Search for ID and connecto to host    
     selectid = input ("Type ID of host to create a SSH Session: ")
     sqlite_search_query = """SELECT * from CONNECTIONS where ID like (?)"""
     cursor.execute(sqlite_search_query, selectid)
@@ -79,16 +79,17 @@ def modifyhost():
     conn.commit()
     cursor.close()
 
-
-
 def deletehost():
     print("Type the ID of a host you want to remove from the catalog.")
     print("If you want to delete all entries in the catalog, type 'ALL' instead.")
     deleteid = input ("ID: ")
     if deleteid == ("ALL"):
         cursor.execute("DELETE FROM CONNECTIONS")
-        conn.commit
-        cursor.close
+        conn.commit()
+        cursor.execute("UPDATE sqlite_sequence SET seq=0 WHERE name='CONNECTIONS'")
+        print("Deleted all entries in the database.")
+        conn.commit()
+        cursor.close()
     else:
         cursor.execute("DELETE FROM CONNECTIONS WHERE id = (?)", (deleteid))
         conn.commit()
